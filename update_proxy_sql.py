@@ -1,29 +1,17 @@
 import asyncio
 import aiohttp
 import time
-import orm
 import sys
-from orm import Model, StringField, BooleanField, IntegerField
 from scrapy import Selector
 import pymysql
 import traceback
 import random
-
-
-class Proxy(Model):
-    ''' 代理数据对象类 '''
-    __table__ = 'proxy'
-    url = StringField(primary_key=True, ddl='varchar(30)')
-    ip = StringField(ddl='varchar(15)')
-    port = StringField(ddl='varchar(5)')
-    address = StringField(ddl='varchar(25)')
-    types = StringField(ddl='varchar(5)')
-    speed = BooleanField(default=1.0)
-    response_time = BooleanField(default=1.0)
-    success_times = IntegerField(default=0)
-    failure_times = IntegerField(default=0)
-    source_url = StringField(ddl='varchar(255)')
-    verification_time = BooleanField(default=0.0)
+import logging
+from config import configs
+if configs.debug:  # 设置logging打印等级，必须在要使用的模块import之前设置才有效
+    logging.basicConfig(level=logging.INFO)
+import orm
+from sql_models import Proxy
 
 
 class Crawler_Proxy:
@@ -176,7 +164,7 @@ class Crawler_Proxy:
     async def run(self):
         ''' 运行任务 '''
         print('<<<<<<<<<<<<<<<<<<<<开始抓取代理IP>>>>>>>>>>>>>>>>>>>>')
-        await orm.create_pool(self.loop, user='root', password='hupo0-0', db='web_crawler')
+        await orm.create_pool(self.loop, **configs.db)
         task_works = [self.work_print(), self.work_66ip(), self.work_xici(),
                       self.work_mimi(), self.work_kuai()]
         workers_crawler = [asyncio.Task(task, loop=self.loop)
