@@ -9,7 +9,7 @@ import random
 import logging
 from config import configs
 if configs.debug:  # 设置logging打印等级，必须在要使用的模块import之前设置才有效
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
 import orm
 from sql_models import Proxy
 
@@ -178,6 +178,7 @@ class Crawler_Proxy:
             wp.cancel()
         for wc in workers_crawler:
             wc.cancel()
+        await orm.close()
         print('\n<<<<<<<<<<<<<<<<<<<<抓取代理IP完成>>>>>>>>>>>>>>>>>>>>')
 
 
