@@ -181,10 +181,10 @@ class Crawler_Proxy:
                       self.work_mimi(), self.work_kuai()]
         workers_crawler = [asyncio.Task(task, loop=self.loop)
                            for task in task_works]
-        while self.proxy_queue.qsize() == 0:  # 等待队列中存在数据
-            await asyncio.sleep(0.1)
         workers_proxy = [asyncio.Task(self.work_verification(), loop=self.loop)
                          for _ in range(self.task_num)]
+        while self.proxy_queue.qsize() == 0:  # 等待队列中存在数据
+            await asyncio.sleep(0.1)
         await self.proxy_queue.join()
         for wp in workers_proxy:
             wp.cancel()
